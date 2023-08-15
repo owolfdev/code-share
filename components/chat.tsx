@@ -5,6 +5,12 @@ import { Alert } from "@/components/alert";
 
 import { useUser } from "@/lib/UserContext";
 
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+// import SyntaxHighlighter from "react-syntax-highlighter";
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
 type ChatMessage = {
   chat_id: string;
   content: string;
@@ -30,6 +36,8 @@ function Chat({ supabase }: { supabase: any }) {
   const userId = user?.id;
 
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+
+  const [copiedItemId, setCopiedItemId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -130,7 +138,8 @@ function Chat({ supabase }: { supabase: any }) {
   return (
     <div>
       <div className="border border-gray-300 rounded-lg w-full  p-4 ">
-        <div className="overflow-y-auto h-64 mb-4 border rounded lg border-gray-200 pb-4 px-4">
+        <div className="overflow-y-auto max-h-[650px] mb-4 border rounded lg border-gray-200 pb-4 px-4">
+          {/* messages map start*/}
           {messages.map((item) => (
             <div
               key={item.id}
@@ -164,8 +173,24 @@ function Chat({ supabase }: { supabase: any }) {
                       userId === item.sender_id
                         ? "bg-gray-600 text-white"
                         : "bg-gray-300 text-black"
-                    } rounded-2xl px-3 py-2 break-words text-sm`}
+                    } rounded-2xl px-3 py-2 break-words text-sm relative`}
                   >
+                    <div id="control-bar" className=" pb-1 mb-1">
+                      <div className="">
+                        <button
+                          className="text-gray-100 hover:text-gray-200 bg-gray-500 hover:bg-gray-400 rounded-lg px-2 py-1 text-xs"
+                          onClick={() => {
+                            navigator.clipboard.writeText(item.content);
+                            setCopiedItemId(item.id);
+                            setTimeout(() => setCopiedItemId(null), 1000); // Reset after a delay
+                          }}
+                        >
+                          {copiedItemId === item.id ? "Copied!" : "Copy"}
+                        </button>
+                      </div>
+                      {userId === item.sender_id && <div className=""></div>}
+                    </div>
+
                     {userId === item.sender_id &&
                       hoveredMessageId === item.id && (
                         <Alert
@@ -175,19 +200,45 @@ function Chat({ supabase }: { supabase: any }) {
                           title="Delete Message"
                         />
                       )}
-                    {item.content}
+                    {/* content */}
+                    <pre className=" whitespace-pre-wrap ">
+                      <SyntaxHighlighter
+                        lineProps={{
+                          style: {
+                            wordBreak: "break-all",
+                            whiteSpace: "pre-wrap",
+                            lineBreak: "anywhere",
+                          },
+                        }}
+                        wrapLines={true}
+                        language="javascript"
+                        style={vscDarkPlus}
+                        // Enable code wrapping
+                        customStyle={{
+                          borderRadius: "8px",
+                          padding: "10px",
+                          whiteSpace: "pre-wrap", // Preserve line breaks
+                        }}
+                        className="rounded-lg"
+                      >
+                        {item.content}
+                      </SyntaxHighlighter>
+                    </pre>
+
+                    {/* content */}
                   </div>
                 </div>
               </div>
             </div>
           ))}
+
+          {/* messages map end */}
           {/* This is an invisible div, acting as a marker to scroll to */}
           <div ref={bottomRef} />
         </div>
         <form action="" onSubmit={handleSend}>
           <div className="flex items-center">
-            <input
-              type="text"
+            <textarea
               className="border rounded-l p-2 flex-1 outline-gray-400"
               value={currentMessage}
               onChange={(e) => setCurrentMessage(e.target.value)}

@@ -32,7 +32,7 @@ export default function Home() {
       <div className="flex flex-col items-start gap-2 ">
         <div className="flex gap-2">
           <h1 className="text-center w-full font-extrabold leading-tight tracking-tight text-5xl sm:text-4xl md:text-5xl">
-            Chat App
+            Share Code
           </h1>
           <div className="w-[150px] items-center flex">
             <button
