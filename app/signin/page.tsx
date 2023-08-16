@@ -49,13 +49,13 @@ export default function Tmp() {
   }, []);
 
   return (
-    <section className="container flex flex-col items-center justify-center gap-6 pt-12 pb-8 ">
-      <div className="flex max-w-[980px] flex-col items-start gap-2">
+    <section className="flex flex-col items-center justify-center gap-6 pt-12 pb-8 w-full px-4">
+      <div className="">
         <h1 className="text-center w-full font-extrabold leading-tight tracking-tight text-5xl">
           Sign In
         </h1>
       </div>
-      <div className="">
+      <div className="flex w-full  justify-center">
         <SignInCard supabase={supabase} signin={handleSignIn} />
       </div>
     </section>
