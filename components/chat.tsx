@@ -36,6 +36,7 @@ const deleteChat_AlertMessage = "Are you sure you want to delete this message?";
 
 function Chat({ supabase }: { supabase: any }) {
   const [title, setTitle] = useState<string>("");
+  const [copiedTitle, setCopiedTitle] = useState<string | null>(null);
   const [language, setLanguage] = useState<string>("javascript");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
@@ -199,7 +200,7 @@ function Chat({ supabase }: { supabase: any }) {
                     >
                       <div className="">
                         <button
-                          className="text-gray-100 hover:text-gray-200 bg-gray-500 hover:bg-gray-400 rounded-lg px-2 py-1 text-xs"
+                          className="text-gray-100 hover:text-gray-200 bg-gray-500 hover:bg-gray-400 rounded-lg px-2 py-1 text-xs w-[60px]"
                           onClick={() => {
                             navigator.clipboard.writeText(item.content);
                             setCopiedItemId(item.id);
@@ -209,9 +210,36 @@ function Chat({ supabase }: { supabase: any }) {
                           {copiedItemId === item.id ? "Copied!" : "Copy"}
                         </button>
                       </div>
-                      <div className="flex w-full  justify-center">
-                        <div>{item.title}</div>
+                      {/* title */}
+                      <div className="flex w-full justify-center hover:cursor-pointer hover:text-gray-200">
+                        <div
+                          onClick={() => {
+                            navigator.clipboard
+                              .writeText(item.title)
+                              .then(() => {
+                                console.log(
+                                  "Text copied to clipboard:",
+                                  item.title
+                                );
+                                setCopiedTitle("Title copied!");
+                                setTimeout(() => {
+                                  setCopiedTitle(null);
+                                }, 1000); // Reset after a second
+                              })
+                              .catch((error) => {
+                                console.error(
+                                  "Failed to copy text to clipboard:",
+                                  error
+                                );
+                              });
+                          }}
+                        >
+                          {copiedTitle === "Title copied!"
+                            ? "Title copied!"
+                            : item.title}
+                        </div>
                       </div>
+                      {/* title end */}
                       <div>
                         <div className="text-gray-100 bg-gray-500  rounded-lg px-2 py-1 text-xs">
                           {item.language}
