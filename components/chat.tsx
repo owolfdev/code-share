@@ -241,59 +241,7 @@ function Chat({ supabase }: { supabase: any }) {
                         : "bg-gray-300 text-black"
                     } rounded-2xl px-3 py-2 break-words text-sm relative`}
                   >
-                    <div
-                      id="control-bar"
-                      className="flex pt-1 pb-1 mb-1 gap-4 items-center"
-                    >
-                      <div className="">
-                        <button
-                          className="text-gray-100 hover:text-gray-200 bg-gray-500 hover:bg-gray-400 rounded-lg px-2 py-1 text-xs w-[60px]"
-                          onClick={() => {
-                            navigator.clipboard.writeText(item.content);
-                            setCopiedItemId(item.id);
-                            setTimeout(() => setCopiedItemId(null), 1000); // Reset after a delay
-                          }}
-                        >
-                          {copiedItemId === item.id ? "Copied!" : "Copy"}
-                        </button>
-                      </div>
-                      {/* title */}
-                      <div className="flex w-full justify-center hover:cursor-pointer hover:text-gray-200">
-                        <div
-                          onClick={() => {
-                            navigator.clipboard
-                              .writeText(item.title)
-                              .then(() => {
-                                console.log(
-                                  "Text copied to clipboard:",
-                                  item.title
-                                );
-                                setCopiedTitle("Title copied!");
-                                setTimeout(() => {
-                                  setCopiedTitle(null);
-                                }, 1000); // Reset after a second
-                              })
-                              .catch((error) => {
-                                console.error(
-                                  "Failed to copy text to clipboard:",
-                                  error
-                                );
-                              });
-                          }}
-                        >
-                          {copiedTitle === "Title copied!"
-                            ? "Title copied!"
-                            : item.title}
-                        </div>
-                      </div>
-                      {/* title end */}
-                      <div>
-                        <div className="text-gray-100 bg-gray-500  rounded-lg px-2 py-1 text-xs">
-                          {item.language}
-                        </div>
-                      </div>
-                      {/* {userId === item.sender_id && <div className=""></div>} */}
-                    </div>
+                    <ControlBar item={item} />
 
                     {userId === item.sender_id &&
                       hoveredMessageId === item.id && (
