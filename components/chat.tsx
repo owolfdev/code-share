@@ -143,7 +143,7 @@ function Chat({ supabase }: { supabase: any }) {
           {messages.map((item) => (
             <div
               key={item.id}
-              className={`w-full mb-2 flex items-start ${
+              className={`w-full mb-2 mt-4 flex items-start ${
                 userId === item.sender_id ? "justify-end" : "justify-start"
               }`}
               onMouseEnter={() => setHoveredMessageId(item.id)}
@@ -237,9 +237,9 @@ function Chat({ supabase }: { supabase: any }) {
           <div ref={bottomRef} />
         </div>
         <form action="" onSubmit={handleSend}>
-          <div className="flex items-center">
+          <div className="flex flex-col  gap-2">
             <textarea
-              className="border rounded-l p-2 flex-1 outline-gray-400"
+              className="border rounded-l p-2 outline-gray-400 w-full h-40"
               value={currentMessage}
               onChange={(e) => setCurrentMessage(e.target.value)}
               placeholder="Type a message..."
@@ -248,7 +248,7 @@ function Chat({ supabase }: { supabase: any }) {
             <button
               type="submit"
               // onClick={handleSend}
-              className="px-4 py-2 rounded-r border border-black bg-black text-white"
+              className="px-4 py-2 rounded border border-black bg-black text-white"
             >
               Send
             </button>
