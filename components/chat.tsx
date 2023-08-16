@@ -37,6 +37,7 @@ const deleteChat_AlertMessage = "Are you sure you want to delete this message?";
 function Chat({ supabase }: { supabase: any }) {
   const [title, setTitle] = useState<string>("");
   const [copiedTitle, setCopiedTitle] = useState<string | null>(null);
+  const [copiedTitles, setCopiedTitles] = useState<Record<string, boolean>>({});
   const [language, setLanguage] = useState<string>("javascript");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
@@ -177,9 +178,15 @@ function Chat({ supabase }: { supabase: any }) {
                 .writeText(item.title)
                 .then(() => {
                   console.log("Text copied to clipboard:", item.title);
-                  setCopiedTitle("Title copied!");
+                  setCopiedTitles((prevCopiedTitles) => ({
+                    ...prevCopiedTitles,
+                    [item.id]: true,
+                  }));
                   setTimeout(() => {
-                    setCopiedTitle(null);
+                    setCopiedTitles((prevCopiedTitles) => ({
+                      ...prevCopiedTitles,
+                      [item.id]: false,
+                    }));
                   }, 1000); // Reset after a second
                 })
                 .catch((error) => {
@@ -187,7 +194,7 @@ function Chat({ supabase }: { supabase: any }) {
                 });
             }}
           >
-            {copiedTitle === "Title copied!" ? "Title copied!" : item.title}
+            {copiedTitles[item.id] ? "Title copied!" : item.title}
           </div>
         </div>
         {/* title end */}
