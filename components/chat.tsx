@@ -14,12 +14,23 @@ import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 type ChatMessage = {
   chat_id: string;
   title: string;
+  language: string;
   content: string;
   id: string;
   sender_id: string;
   sent_at: string;
   updated_at: string;
 };
+
+const popularLanguages = [
+  "javascript",
+  "python",
+  "java",
+  "html",
+  "css",
+  "typescript",
+  // Add more languages as needed
+];
 
 const deleteChat_AlertMessage = "Are you sure you want to delete this message?";
 
@@ -89,6 +100,7 @@ function Chat({ supabase }: { supabase: any }) {
           content: currentMessage.trim(),
           chat_id: chatId,
           title: title,
+          language: language,
         })
         .single()
         .select("*");
@@ -202,7 +214,7 @@ function Chat({ supabase }: { supabase: any }) {
                       </div>
                       <div>
                         <div className="text-gray-100 bg-gray-500  rounded-lg px-2 py-1 text-xs">
-                          {language}
+                          {item.language}
                         </div>
                       </div>
                       {/* {userId === item.sender_id && <div className=""></div>} */}
@@ -228,7 +240,7 @@ function Chat({ supabase }: { supabase: any }) {
                           },
                         }}
                         wrapLines={true}
-                        language={language}
+                        language={item.language}
                         style={vscDarkPlus}
                         // Enable code wrapping
                         customStyle={{
@@ -255,7 +267,7 @@ function Chat({ supabase }: { supabase: any }) {
         </div>
         <form action="" onSubmit={handleSend}>
           <div className="flex flex-col gap-2">
-            <div>
+            <div className="flex gap-4">
               <input
                 id="title"
                 type="text"
@@ -264,6 +276,18 @@ function Chat({ supabase }: { supabase: any }) {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Add a title"
               />
+
+              <select
+                className="border rounded p-2 outline-gray-400 pr-4"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+              >
+                {popularLanguages.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
             </div>
             <textarea
               className="border rounded p-2 outline-gray-400 w-full h-40"
