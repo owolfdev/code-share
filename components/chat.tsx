@@ -13,6 +13,7 @@ import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 type ChatMessage = {
   chat_id: string;
+  title: string;
   content: string;
   id: string;
   sender_id: string;
@@ -23,6 +24,8 @@ type ChatMessage = {
 const deleteChat_AlertMessage = "Are you sure you want to delete this message?";
 
 function Chat({ supabase }: { supabase: any }) {
+  const [title, setTitle] = useState<string>("");
+  const [language, setLanguage] = useState<string>("javascript");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
   const [avatars, setAvatars] = useState<Record<string, string>>({});
@@ -77,6 +80,7 @@ function Chat({ supabase }: { supabase: any }) {
 
   const handleSend = async (e: any) => {
     e.preventDefault();
+
     if (currentMessage.trim() !== "" && userId) {
       const { data, error } = await supabase
         .from("real_time_for_pass_code")
@@ -84,6 +88,7 @@ function Chat({ supabase }: { supabase: any }) {
           sender_id: userId,
           content: currentMessage.trim(),
           chat_id: chatId,
+          title: title,
         })
         .single()
         .select("*");
@@ -93,6 +98,7 @@ function Chat({ supabase }: { supabase: any }) {
       } else {
         // console.log(data);
         setCurrentMessage("");
+        setTitle("");
       }
     }
   };
@@ -175,7 +181,10 @@ function Chat({ supabase }: { supabase: any }) {
                         : "bg-gray-300 text-black"
                     } rounded-2xl px-3 py-2 break-words text-sm relative`}
                   >
-                    <div id="control-bar" className=" pb-1 mb-1">
+                    <div
+                      id="control-bar"
+                      className="flex pt-1 pb-1 mb-1 gap-4 items-center"
+                    >
                       <div className="">
                         <button
                           className="text-gray-100 hover:text-gray-200 bg-gray-500 hover:bg-gray-400 rounded-lg px-2 py-1 text-xs"
@@ -188,7 +197,15 @@ function Chat({ supabase }: { supabase: any }) {
                           {copiedItemId === item.id ? "Copied!" : "Copy"}
                         </button>
                       </div>
-                      {userId === item.sender_id && <div className=""></div>}
+                      <div className="flex w-full  justify-center">
+                        <div>{item.title}</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-100 bg-gray-500  rounded-lg px-2 py-1 text-xs">
+                          {language}
+                        </div>
+                      </div>
+                      {/* {userId === item.sender_id && <div className=""></div>} */}
                     </div>
 
                     {userId === item.sender_id &&
@@ -211,7 +228,7 @@ function Chat({ supabase }: { supabase: any }) {
                           },
                         }}
                         wrapLines={true}
-                        language="javascript"
+                        language={language}
                         style={vscDarkPlus}
                         // Enable code wrapping
                         customStyle={{
@@ -237,9 +254,19 @@ function Chat({ supabase }: { supabase: any }) {
           <div ref={bottomRef} />
         </div>
         <form action="" onSubmit={handleSend}>
-          <div className="flex flex-col  gap-2">
+          <div className="flex flex-col gap-2">
+            <div>
+              <input
+                id="title"
+                type="text"
+                className="border rounded p-2 outline-gray-400 sm:w-1/2 w-full"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Add a title"
+              />
+            </div>
             <textarea
-              className="border rounded-l p-2 outline-gray-400 w-full h-40"
+              className="border rounded p-2 outline-gray-400 w-full h-40"
               value={currentMessage}
               onChange={(e) => setCurrentMessage(e.target.value)}
               placeholder="Type a message..."

@@ -28,7 +28,7 @@ export function Alert({ action, item, message, title }: AlertProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button className="absolute bg-gray-800 text-white rounded-full w-4 h-4 focus:outline-none text-xs flex items-center justify-center top-0 right-0 transform translate-x-[10%] -translate-y-[10%] pb-0.5">
+        <button className="absolute bg-gray-800 text-white rounded-full w-4 h-4 focus:outline-none text-xs flex items-center justify-center top-0 right-0 transform translate-x-[30%] -translate-y-[30%] pb-0.5">
           x
         </button>
       </AlertDialogTrigger>
