@@ -156,7 +156,7 @@ function Chat({ supabase }: { supabase: any }) {
   };
 
   const handleTextAreaInputChange = (e: any) => {
-    setCurrentMessage(e.target.value);
+    //setCurrentMessage(e.target.value);
   };
 
   const ControlBar = ({ item }: { item: ChatMessage }) => {
