@@ -155,6 +155,10 @@ function Chat({ supabase }: { supabase: any }) {
     }
   };
 
+  const handleTextAreaInputChange = (e: any) => {
+    setCurrentMessage(e.target.value);
+  };
+
   const ControlBar = ({ item }: { item: ChatMessage }) => {
     return (
       <div id="control-bar" className="flex pt-1 pb-1 mb-1 gap-4 items-center">
@@ -322,8 +326,7 @@ function Chat({ supabase }: { supabase: any }) {
             </div>
             <textarea
               className="border rounded p-2 outline-gray-400 w-full h-40"
-              value={currentMessage}
-              onChange={(e) => setCurrentMessage(e.target.value)}
+              onChange={handleTextAreaInputChange}
               placeholder="Type a message..."
             />
 
