@@ -5,6 +5,8 @@ import { Alert } from "@/components/alert";
 
 import { useUser } from "@/lib/UserContext";
 
+import { throttle } from "lodash";
+
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 // import SyntaxHighlighter from "react-syntax-highlighter";
@@ -155,9 +157,9 @@ function Chat({ supabase }: { supabase: any }) {
     }
   };
 
-  const handleTextAreaInputChange = (e: any) => {
-    //setCurrentMessage(e.target.value);
-  };
+  const handleInputChange = throttle((value) => {
+    setCurrentMessage(value);
+  }, 200);
 
   const ControlBar = ({ item }: { item: ChatMessage }) => {
     return (
@@ -326,7 +328,7 @@ function Chat({ supabase }: { supabase: any }) {
             </div>
             <textarea
               className="border rounded p-2 outline-gray-400 w-full h-40"
-              onChange={handleTextAreaInputChange}
+              onChange={(e) => handleInputChange(e.target.value)}
               placeholder="Type a message..."
             />
 
