@@ -1,12 +1,8 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-
 import { Alert } from "@/components/alert";
-
 import { useUser } from "@/lib/UserContext";
-
 import { set, throttle } from "lodash";
-
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 // import SyntaxHighlighter from "react-syntax-highlighter";
@@ -60,11 +56,32 @@ function CodeChat({ supabase }: { supabase: any }) {
   const [copiedItemId, setCopiedItemId] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("use effect [] fetch data");
     async function fetchData() {
       const data = await getData();
       if (data) setAvatarsBySenderIds(data);
     }
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    console.log("use effect [] subscribe to real time");
+    const channel = supabase
+      .channel(`passCode-schema-db-changes-for-${chatId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "real_time_for_pass_code",
+        },
+        (payload: any) => setMessages((messages) => [...messages, payload.new])
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
   }, []);
 
   const getData = async () => {
@@ -77,6 +94,14 @@ function CodeChat({ supabase }: { supabase: any }) {
     }
     return data;
   };
+
+  // Scroll to bottom whenever the messages array changes
+  useEffect(() => {
+    console.log("use effect [messages], scroll to bottom", messages);
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const setAvatarsBySenderIds = async (messages: ChatMessage[]) => {
     const senderIds = Array.from(
@@ -122,32 +147,6 @@ function CodeChat({ supabase }: { supabase: any }) {
       }
     }
   };
-
-  useEffect(() => {
-    const channel = supabase
-      .channel(`passCode-schema-db-changes-for-${chatId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "real_time_for_pass_code",
-        },
-        (payload: any) => setMessages((messages) => [...messages, payload.new])
-      )
-      .subscribe();
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, []);
-
-  // Scroll to bottom whenever the messages array changes
-  useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
 
   const handleDeleteMessage = async (id: string) => {
     const { data, error } = await supabase
@@ -218,88 +217,91 @@ function CodeChat({ supabase }: { supabase: any }) {
     );
   };
 
+  const ChatView = ({ item }: { item: ChatMessage }) => {
+    return messages.map((item: any) => (
+      <div
+        id="chat-container"
+        key={item.id}
+        className={`w-full mb-2 mt-4 flex items-start ${
+          userId === item.sender_id ? "justify-end" : "justify-start"
+        }`}
+        onMouseEnter={() => setHoveredMessageId(item.id)}
+        onMouseLeave={() => setHoveredMessageId(null)}
+      >
+        <div
+          style={{ maxWidth: "100%" }}
+          className="flex gap-1 items-end relative"
+        >
+          {userId !== item.sender_id && (
+            <div className="w-6 h-6 bg-cover bg-center rounded-full overflow-hidden flex-shrink-0">
+              <img src={avatars[item.sender_id] || ""} />
+            </div>
+          )}
+          <div>
+            <div className="text-[11px] text-gray-300 pr-3 pl-3 text-right">
+              {new Date(item.sent_at).toLocaleString("en-US", {
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}
+            </div>
+            <div
+              id="chat-message"
+              className={`${
+                userId === item.sender_id
+                  ? "bg-gray-600 text-white"
+                  : "bg-gray-300 text-black"
+              } rounded-2xl px-3 py-2 break-words text-sm relative`}
+            >
+              <ControlBar item={item} />
+
+              {userId === item.sender_id && hoveredMessageId === item.id && (
+                <Alert
+                  action={handleDeleteMessage}
+                  item={item.id}
+                  message={deleteChat_AlertMessage}
+                  title="Delete Message"
+                />
+              )}
+
+              <pre className=" whitespace-pre-wrap ">
+                <SyntaxHighlighter
+                  lineProps={{
+                    style: {
+                      wordBreak: "break-all",
+                      whiteSpace: "pre-wrap",
+                      lineBreak: "anywhere",
+                    },
+                  }}
+                  wrapLines={true}
+                  language={item.language}
+                  style={vscDarkPlus}
+                  // Enable code wrapping
+                  customStyle={{
+                    borderRadius: "8px",
+                    padding: "10px",
+                    whiteSpace: "pre-wrap", // Preserve line breaks
+                  }}
+                  className="rounded-lg"
+                >
+                  {item.content}
+                </SyntaxHighlighter>
+              </pre>
+              <ControlBar item={item} />
+            </div>
+          </div>
+        </div>
+      </div>
+    ));
+  };
+
   return (
     <div>
       <div className="border border-gray-300 rounded-lg w-full  p-4 ">
         <div className="overflow-y-auto max-h-[650px] mb-4 border rounded lg border-gray-200 pb-4 px-4">
-          {/* {messages.map((item) => (
-            <div
-              id="chat-container"
-              key={item.id}
-              className={`w-full mb-2 mt-4 flex items-start ${
-                userId === item.sender_id ? "justify-end" : "justify-start"
-              }`}
-              onMouseEnter={() => setHoveredMessageId(item.id)}
-              onMouseLeave={() => setHoveredMessageId(null)}
-            >
-              <div
-                style={{ maxWidth: "100%" }}
-                className="flex gap-1 items-end relative"
-              >
-                {userId !== item.sender_id && (
-                  <div className="w-6 h-6 bg-cover bg-center rounded-full overflow-hidden flex-shrink-0">
-                    <img src={avatars[item.sender_id] || ""} />
-                  </div>
-                )}
-                <div>
-                  <div className="text-[11px] text-gray-300 pr-3 pl-3 text-right">
-                    {new Date(item.sent_at).toLocaleString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })}
-                  </div>
-                  <div
-                    id="chat-message"
-                    className={`${
-                      userId === item.sender_id
-                        ? "bg-gray-600 text-white"
-                        : "bg-gray-300 text-black"
-                    } rounded-2xl px-3 py-2 break-words text-sm relative`}
-                  >
-                    <ControlBar item={item} />
-
-                    {userId === item.sender_id &&
-                      hoveredMessageId === item.id && (
-                        <Alert
-                          action={handleDeleteMessage}
-                          item={item.id}
-                          message={deleteChat_AlertMessage}
-                          title="Delete Message"
-                        />
-                      )}
-
-                    <pre className=" whitespace-pre-wrap ">
-                      <SyntaxHighlighter
-                        lineProps={{
-                          style: {
-                            wordBreak: "break-all",
-                            whiteSpace: "pre-wrap",
-                            lineBreak: "anywhere",
-                          },
-                        }}
-                        wrapLines={true}
-                        language={item.language}
-                        style={vscDarkPlus}
-                        // Enable code wrapping
-                        customStyle={{
-                          borderRadius: "8px",
-                          padding: "10px",
-                          whiteSpace: "pre-wrap", // Preserve line breaks
-                        }}
-                        className="rounded-lg"
-                      >
-                        {item.content}
-                      </SyntaxHighlighter>
-                    </pre>
-                    <ControlBar item={item} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))} */}
+          <ChatView item={messages[0]} />
 
           {/* messages map end */}
           {/* This is an invisible div, acting as a marker to scroll to */}
