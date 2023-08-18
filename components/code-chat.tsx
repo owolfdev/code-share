@@ -66,8 +66,8 @@ function CodeChat({ supabase }: { supabase: any }) {
 
   //realtime subscription
   useEffect(() => {
-    const insertChannel = supabase
-      .channel(`passCode-schema-db-insert-changes-for-${chatId}`)
+    const channel = supabase
+      .channel(`passCode-schema-db-changes-for-${chatId}`)
       .on(
         "postgres_changes",
         {
@@ -80,10 +80,6 @@ function CodeChat({ supabase }: { supabase: any }) {
           setMessages((messages) => [...messages, payload.new]);
         }
       )
-      .subscribe();
-
-    const deleteChannel = supabase
-      .channel(`passCode-schema-db-delete-changes-for-${chatId}`)
       .on(
         "postgres_changes",
         {
@@ -101,9 +97,28 @@ function CodeChat({ supabase }: { supabase: any }) {
       )
       .subscribe();
 
+    // const deleteChannel = supabase
+    //   .channel(`passCode-schema-db-delete-changes-for-${chatId}`)
+    //   .on(
+    //     "postgres_changes",
+    //     {
+    //       event: "DELETE",
+    //       schema: "public",
+    //       table: "real_time_for_pass_code",
+    //     },
+    //     (payload: any) => {
+    //       // console.log("delete payload", payload);
+
+    //       setMessages((messages) =>
+    //         messages.filter((msg) => msg.id !== payload.old.id)
+    //       );
+    //     }
+    //   )
+    //   .subscribe();
+
     return () => {
-      insertChannel.unsubscribe();
-      deleteChannel.unsubscribe();
+      channel.unsubscribe();
+      // deleteChannel.unsubscribe();
     };
   }, []);
 
