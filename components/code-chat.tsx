@@ -64,10 +64,10 @@ function CodeChat({ supabase }: { supabase: any }) {
     fetchData();
   }, []);
 
+  //realtime subscription
   useEffect(() => {
-    console.log("use effect [] subscribe to real time");
-    const channel = supabase
-      .channel(`passCode-schema-db-changes-for-${chatId}`)
+    const insertChannel = supabase
+      .channel(`passCode-schema-db-insert-changes-for-${chatId}`)
       .on(
         "postgres_changes",
         {
@@ -75,12 +75,35 @@ function CodeChat({ supabase }: { supabase: any }) {
           schema: "public",
           table: "real_time_for_pass_code",
         },
-        (payload: any) => setMessages((messages) => [...messages, payload.new])
+        (payload: any) => {
+          console.log("insert payload", payload);
+          setMessages((messages) => [...messages, payload.new]);
+        }
+      )
+      .subscribe();
+
+    const deleteChannel = supabase
+      .channel(`passCode-schema-db-delete-changes-for-${chatId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "real_time_for_pass_code",
+        },
+        (payload: any) => {
+          console.log("delete payload", payload);
+
+          setMessages((messages) => [
+            messages.filter((msg) => msg.id !== payload.old.id)[0],
+          ]);
+        }
       )
       .subscribe();
 
     return () => {
-      channel.unsubscribe();
+      insertChannel.unsubscribe();
+      deleteChannel.unsubscribe();
     };
   }, []);
 
