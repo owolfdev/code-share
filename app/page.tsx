@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Chat from "@/components/chat";
+import CodeChat from "@/components/code-chat";
 // import ChatReverseScroll from "@/components/chat-reverse-scroll";
 
 import { useRouter } from "next/navigation";
@@ -42,9 +43,11 @@ export default function Home() {
           </button>
         </div>
       </div>
-
-      <div className="w-full">
+      {/* <div className="w-full">
         {userContext?.user && <Chat supabase={supabase} />}
+      </div> */}
+      <div>
+        <CodeChat supabase={supabase} />
       </div>
     </section>
   );

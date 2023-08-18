@@ -5,7 +5,7 @@ import { Alert } from "@/components/alert";
 
 import { useUser } from "@/lib/UserContext";
 
-import { throttle } from "lodash";
+import { set, throttle } from "lodash";
 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -36,13 +36,13 @@ const popularLanguages = [
 
 const deleteChat_AlertMessage = "Are you sure you want to delete this message?";
 
-function Chat({ supabase }: { supabase: any }) {
+function CodeChat({ supabase }: { supabase: any }) {
   const [title, setTitle] = useState<string>("");
   const [copiedTitle, setCopiedTitle] = useState<string | null>(null);
   const [copiedTitles, setCopiedTitles] = useState<Record<string, boolean>>({});
   const [language, setLanguage] = useState<string>("javascript");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  // const [currentMessage, setCurrentMessage] = useState<string>("");
+  const [currentMessage, setCurrentMessage] = useState<string>("");
   const [avatars, setAvatars] = useState<Record<string, string>>({});
   const bottomRef = useRef<null | HTMLDivElement>(null);
   const [chatId, setChatId] = useState<string>(
@@ -117,7 +117,7 @@ function Chat({ supabase }: { supabase: any }) {
         console.log(error);
       } else {
         // console.log(data);
-        textAreaRef.current?.focus();
+        setCurrentMessage("");
         setTitle("");
       }
     }
@@ -161,9 +161,9 @@ function Chat({ supabase }: { supabase: any }) {
     }
   };
 
-  // const handleInputChange = throttle((value) => {
-  //   setCurrentMessage(value);
-  // }, 200);
+  const handleInputChange = throttle((value) => {
+    setCurrentMessage(value);
+  }, 200);
 
   const ControlBar = ({ item }: { item: ChatMessage }) => {
     return (
@@ -222,9 +222,9 @@ function Chat({ supabase }: { supabase: any }) {
     <div>
       <div className="border border-gray-300 rounded-lg w-full  p-4 ">
         <div className="overflow-y-auto max-h-[650px] mb-4 border rounded lg border-gray-200 pb-4 px-4">
-          {/* messages map start*/}
-          {messages.map((item) => (
+          {/* {messages.map((item) => (
             <div
+              id="chat-container"
               key={item.id}
               className={`w-full mb-2 mt-4 flex items-start ${
                 userId === item.sender_id ? "justify-end" : "justify-start"
@@ -252,6 +252,7 @@ function Chat({ supabase }: { supabase: any }) {
                     })}
                   </div>
                   <div
+                    id="chat-message"
                     className={`${
                       userId === item.sender_id
                         ? "bg-gray-600 text-white"
@@ -269,7 +270,7 @@ function Chat({ supabase }: { supabase: any }) {
                           title="Delete Message"
                         />
                       )}
-                    {/* content */}
+
                     <pre className=" whitespace-pre-wrap ">
                       <SyntaxHighlighter
                         lineProps={{
@@ -293,14 +294,12 @@ function Chat({ supabase }: { supabase: any }) {
                         {item.content}
                       </SyntaxHighlighter>
                     </pre>
-
-                    {/* content */}
                     <ControlBar item={item} />
                   </div>
                 </div>
               </div>
             </div>
-          ))}
+          ))} */}
 
           {/* messages map end */}
           {/* This is an invisible div, acting as a marker to scroll to */}
@@ -332,8 +331,9 @@ function Chat({ supabase }: { supabase: any }) {
             </div>
             <textarea
               ref={textAreaRef}
+              value={currentMessage}
               className="border rounded p-2 outline-gray-400 w-full h-40"
-              // onChange={(e) => handleInputChange(e.target.value)}
+              onChange={(e) => handleInputChange(e.target.value)}
               placeholder="Type a message..."
             />
 
@@ -351,4 +351,4 @@ function Chat({ supabase }: { supabase: any }) {
   );
 }
 
-export default Chat;
+export default CodeChat;
