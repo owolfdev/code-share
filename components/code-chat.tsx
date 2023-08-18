@@ -76,7 +76,7 @@ function CodeChat({ supabase }: { supabase: any }) {
           table: "real_time_for_pass_code",
         },
         (payload: any) => {
-          console.log("insert payload", payload);
+          // console.log("insert payload", payload);
           setMessages((messages) => [...messages, payload.new]);
         }
       )
@@ -92,18 +92,18 @@ function CodeChat({ supabase }: { supabase: any }) {
           table: "real_time_for_pass_code",
         },
         (payload: any) => {
-          console.log("delete payload", payload);
+          // console.log("delete payload", payload);
 
-          setMessages((messages) => [
-            messages.filter((msg) => msg.id !== payload.old.id)[0],
-          ]);
+          setMessages((messages) =>
+            messages.filter((msg) => msg.id !== payload.old.id)
+          );
         }
       )
       .subscribe();
 
     return () => {
       insertChannel.unsubscribe();
-      deleteChannel.unsubscribe();
+      // deleteChannel.unsubscribe();
     };
   }, []);
 
