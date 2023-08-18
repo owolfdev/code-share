@@ -97,28 +97,8 @@ function CodeChat({ supabase }: { supabase: any }) {
       )
       .subscribe();
 
-    // const deleteChannel = supabase
-    //   .channel(`passCode-schema-db-delete-changes-for-${chatId}`)
-    //   .on(
-    //     "postgres_changes",
-    //     {
-    //       event: "DELETE",
-    //       schema: "public",
-    //       table: "real_time_for_pass_code",
-    //     },
-    //     (payload: any) => {
-    //       // console.log("delete payload", payload);
-
-    //       setMessages((messages) =>
-    //         messages.filter((msg) => msg.id !== payload.old.id)
-    //       );
-    //     }
-    //   )
-    //   .subscribe();
-
     return () => {
       channel.unsubscribe();
-      // deleteChannel.unsubscribe();
     };
   }, []);
 
@@ -192,9 +172,9 @@ function CodeChat({ supabase }: { supabase: any }) {
       .delete()
       .eq("id", id);
     if (!error) {
-      setMessages((prevMessages) =>
-        prevMessages.filter((msg) => msg.id !== id)
-      );
+      // setMessages((prevMessages) =>
+      //   prevMessages.filter((msg) => msg.id !== id)
+      // );
     }
   };
 
