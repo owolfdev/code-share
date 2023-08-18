@@ -103,7 +103,7 @@ function CodeChat({ supabase }: { supabase: any }) {
 
     return () => {
       insertChannel.unsubscribe();
-      // deleteChannel.unsubscribe();
+      deleteChannel.unsubscribe();
     };
   }, []);
 
