@@ -21,12 +21,20 @@ type ChatMessage = {
 };
 
 const popularLanguages = [
+  "chat message",
   "javascript",
-  "python",
-  "java",
   "html",
   "css",
   "typescript",
+  "php",
+  "python",
+  "java",
+  "go",
+  "ruby",
+  "rust",
+  "c",
+  "c++",
+  "c#",
   // Add more languages as needed
 ];
 
@@ -39,6 +47,7 @@ function CodeChat({ supabase }: { supabase: any }) {
   const [language, setLanguage] = useState<string>("javascript");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
+  const [numberOfLines, setNumberOfLines] = useState<number>(0);
   const [avatars, setAvatars] = useState<Record<string, string>>({});
   const bottomRef = useRef<null | HTMLDivElement>(null);
   const [chatId, setChatId] = useState<string>(
@@ -143,6 +152,9 @@ function CodeChat({ supabase }: { supabase: any }) {
 
     const currentMessage = textAreaRef.current?.value as string;
 
+    // console.log("lines in message:", currentMessage.split(/\r\n|\r|\n/).length);
+    // setNumberOfLines(currentMessage.split(/\r\n|\r|\n/).length);
+
     if (currentMessage.trim() !== "" && userId) {
       const { data, error } = await supabase
         .from("real_time_for_pass_code")
@@ -181,6 +193,11 @@ function CodeChat({ supabase }: { supabase: any }) {
   const handleInputChange = throttle((value) => {
     setCurrentMessage(value);
   }, 200);
+
+  const checkNumberOfLines = (value: string) => {
+    const lines = value.split(/\r\n|\r|\n/).length;
+    return lines;
+  };
 
   const ControlBar = ({ item }: { item: ChatMessage }) => {
     return (
@@ -235,6 +252,35 @@ function CodeChat({ supabase }: { supabase: any }) {
     );
   };
 
+  const ChatContent = React.memo(({ item }: { item: ChatMessage }) => {
+    console.log("item from chat content", item);
+    return (
+      <pre className=" whitespace-pre-wrap ">
+        <SyntaxHighlighter
+          lineProps={{
+            style: {
+              wordBreak: "break-all",
+              whiteSpace: "pre-wrap",
+              lineBreak: "anywhere",
+            },
+          }}
+          wrapLines={true}
+          language={item.language}
+          style={vscDarkPlus}
+          // Enable code wrapping
+          customStyle={{
+            borderRadius: "8px",
+            padding: "10px",
+            whiteSpace: "pre-wrap", // Preserve line breaks
+          }}
+          className="rounded-lg"
+        >
+          {item.content}
+        </SyntaxHighlighter>
+      </pre>
+    );
+  });
+
   const ChatView = ({ item }: { item: ChatMessage }) => {
     return messages.map((item: any) => (
       <div
@@ -284,30 +330,15 @@ function CodeChat({ supabase }: { supabase: any }) {
                 />
               )}
 
-              <pre className=" whitespace-pre-wrap ">
-                <SyntaxHighlighter
-                  lineProps={{
-                    style: {
-                      wordBreak: "break-all",
-                      whiteSpace: "pre-wrap",
-                      lineBreak: "anywhere",
-                    },
-                  }}
-                  wrapLines={true}
-                  language={item.language}
-                  style={vscDarkPlus}
-                  // Enable code wrapping
-                  customStyle={{
-                    borderRadius: "8px",
-                    padding: "10px",
-                    whiteSpace: "pre-wrap", // Preserve line breaks
-                  }}
-                  className="rounded-lg"
-                >
-                  {item.content}
-                </SyntaxHighlighter>
-              </pre>
-              <ControlBar item={item} />
+              {/* chat content */}
+
+              <ChatContent item={item} />
+
+              {/* chat content */}
+              {checkNumberOfLines(item.content) > 30 && (
+                <ControlBar item={item} />
+              )}
+              {/* <ControlBar item={item} /> */}
             </div>
           </div>
         </div>

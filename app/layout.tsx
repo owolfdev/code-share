@@ -90,7 +90,7 @@ export default function RootLayout({
   return (
     <UserContext.Provider value={{ user, signOut }}>
       <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <body className="flex justify-center w-full">{children}</body>
       </html>
     </UserContext.Provider>
   );

@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import Chat from "@/components/chat";
+// import Image from "next/image";
+// import Chat from "@/components/_archive/chat";
 import CodeChat from "@/components/code-chat";
 // import ChatReverseScroll from "@/components/chat-reverse-scroll";
 
@@ -29,7 +29,7 @@ export default function Home() {
   };
 
   return (
-    <section className="px-4 sm:px-8 flex flex-col items-center justify-center gap-6 pt-12 pb-8">
+    <section className="px-4 sm:px-8 flex flex-col items-center justify-center gap-6 pt-12 pb-8 w-full max-w-[800px] ">
       <div className="flex gap-2 justify-between w-full px-2">
         <h1 className="flex flex-col items-center h-full text-4xl font-bold">
           Share Code
@@ -46,7 +46,7 @@ export default function Home() {
       {/* <div className="w-full">
         {userContext?.user && <Chat supabase={supabase} />}
       </div> */}
-      <div>
+      <div className="w-full">
         <CodeChat supabase={supabase} />
       </div>
     </section>
