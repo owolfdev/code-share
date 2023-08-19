@@ -281,6 +281,8 @@ function CodeChat({ supabase }: { supabase: any }) {
     );
   });
 
+  ChatContent.displayName = "ChatContent";
+
   const ChatView = ({ item }: { item: ChatMessage }) => {
     return messages.map((item: any) => (
       <div
