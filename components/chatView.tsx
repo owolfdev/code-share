@@ -98,7 +98,7 @@ export const ChatContent: React.FC<{ item: ChatMessage }> = React.memo(
         <SyntaxHighlighter
           lineProps={{
             style: {
-              wordBreak: "break-all",
+              wordBreak: "break-word",
               whiteSpace: "pre-wrap",
               lineBreak: "anywhere",
             },

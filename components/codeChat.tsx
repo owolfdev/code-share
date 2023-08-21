@@ -20,7 +20,7 @@ export type ChatMessage = {
 };
 
 const popularLanguages = [
-  "chat message",
+  "message",
   "javascript",
   "html",
   "css",
