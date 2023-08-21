@@ -2,13 +2,15 @@
 
 // import Image from "next/image";
 // import Chat from "@/components/_archive/chat";
-import CodeChat from "@/components/code-chat";
+import CodeChat from "@/components/codeChat";
 // import ChatReverseScroll from "@/components/chat-reverse-scroll";
 
 import { useRouter } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 
 import { useUser } from "@/lib/UserContext";
+
+import Test from "@/components/tmp/test";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
@@ -43,12 +45,13 @@ export default function Home() {
           </button>
         </div>
       </div>
-      {/* <div className="w-full">
-        {userContext?.user && <Chat supabase={supabase} />}
-      </div> */}
+
       <div className="w-full">
         <CodeChat supabase={supabase} />
       </div>
+      {/* <div>
+        <Test />
+      </div> */}
     </section>
   );
 }

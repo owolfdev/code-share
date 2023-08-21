@@ -42,14 +42,14 @@ const deleteChat_AlertMessage = "Are you sure you want to delete this message?";
 
 function CodeChat({ supabase }: { supabase: any }) {
   const [title, setTitle] = useState<string>("");
-  const [copiedTitle, setCopiedTitle] = useState<string | null>(null);
   const [copiedTitles, setCopiedTitles] = useState<Record<string, boolean>>({});
   const [language, setLanguage] = useState<string>("javascript");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
-  const [numberOfLines, setNumberOfLines] = useState<number>(0);
   const [avatars, setAvatars] = useState<Record<string, string>>({});
-  const bottomRef = useRef<null | HTMLDivElement>(null);
+  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+  const [copiedItemId, setCopiedItemId] = useState<string | null>(null);
+
   const [chatId, setChatId] = useState<string>(
     "4113f429-c4ad-42aa-b43f-0a2bcafaeaa5"
   );
@@ -59,10 +59,7 @@ function CodeChat({ supabase }: { supabase: any }) {
   const userId = user?.id;
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
-  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
-
-  const [copiedItemId, setCopiedItemId] = useState<string | null>(null);
+  const bottomRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
     console.log("use effect [] fetch data");
@@ -199,7 +196,8 @@ function CodeChat({ supabase }: { supabase: any }) {
     return lines;
   };
 
-  const ControlBar = ({ item }: { item: ChatMessage }) => {
+  const ControlBar = React.memo(({ item }: { item: ChatMessage }) => {
+    console.log("ControlBar!!");
     return (
       <div id="control-bar" className="flex pt-1 pb-1 mb-1 gap-4 items-center">
         <div className="">
@@ -250,10 +248,10 @@ function CodeChat({ supabase }: { supabase: any }) {
         {/* {userId === item.sender_id && <div className=""></div>} */}
       </div>
     );
-  };
+  });
 
   const ChatContent = React.memo(({ item }: { item: ChatMessage }) => {
-    console.log("item from chat content", item);
+    console.log("ChatContent!!");
     return (
       <pre className=" whitespace-pre-wrap ">
         <SyntaxHighlighter
@@ -283,7 +281,8 @@ function CodeChat({ supabase }: { supabase: any }) {
 
   ChatContent.displayName = "ChatContent";
 
-  const ChatView = ({ item }: { item: ChatMessage }) => {
+  const ChatView = React.memo(({ item }: { item: ChatMessage }) => {
+    console.log("ChatView!!");
     return messages.map((item: any) => (
       <div
         id="chat-container"
@@ -332,21 +331,17 @@ function CodeChat({ supabase }: { supabase: any }) {
                 />
               )}
 
-              {/* chat content */}
-
               <ChatContent item={item} />
 
-              {/* chat content */}
               {checkNumberOfLines(item.content) > 30 && (
                 <ControlBar item={item} />
               )}
-              {/* <ControlBar item={item} /> */}
             </div>
           </div>
         </div>
       </div>
     ));
-  };
+  });
 
   return (
     <div>
@@ -354,8 +349,6 @@ function CodeChat({ supabase }: { supabase: any }) {
         <div className="overflow-y-auto max-h-[650px] mb-4 border rounded lg border-gray-200 pb-4 px-4">
           <ChatView item={messages[0]} />
 
-          {/* messages map end */}
-          {/* This is an invisible div, acting as a marker to scroll to */}
           <div ref={bottomRef} />
         </div>
         <form action="" onSubmit={handleSend}>
@@ -392,7 +385,6 @@ function CodeChat({ supabase }: { supabase: any }) {
 
             <button
               type="submit"
-              // onClick={handleSend}
               className="px-4 py-2 rounded border border-black bg-black text-white"
             >
               Send

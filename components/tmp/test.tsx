@@ -1,49 +1,67 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
 
-type AlertProps = {
-  action: (id: string) => Promise<void>;
-  item: string;
-  message: string;
-  title: string;
+interface InputProps {
+  input: string;
+  setInput: (value: string) => void;
+}
+
+const InputComponent = React.memo(({ input, setInput }: InputProps) => {
+  console.log("input");
+  return (
+    <div>
+      <input
+        value={input}
+        className="border-2 border-gray-200"
+        type="text"
+        onChange={(e) => setInput(e.target.value)}
+      />
+    </div>
+  );
+});
+
+const InputComponent2 = React.memo(({ input, setInput }: InputProps) => {
+  console.log("input 2");
+  return (
+    <div>
+      <input
+        value={input}
+        className="border-2 border-gray-200"
+        type="text"
+        onChange={(e) => setInput(e.target.value)}
+      />
+    </div>
+  );
+});
+
+const InputComponent3 = ({ input, setInput }: InputProps) => {
+  console.log("input 3");
+  return (
+    <div>
+      <input
+        value={input}
+        className="border-2 border-gray-200"
+        type="text"
+        onChange={(e) => setInput(e.target.value)}
+      />
+    </div>
+  );
 };
 
-export function Alert({ action, item, message, title }: AlertProps) {
-  const handleAction = () => {
-    // console.log("action:", action);
-    // console.log("item:", item);
-    action(item);
-  };
+function Test() {
+  const [input, setInput] = useState<string>("");
+  const [input2, setInput2] = useState<string>("");
+  const [input3, setInput3] = useState<string>("");
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <button className="absolute bg-gray-800 text-white rounded-full w-4 h-4 focus:outline-none text-xs flex items-center justify-center top-0 right-0 transform translate-x-[10%] -translate-y-[10%] pb-0.5">
-          x
-        </button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{message}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogAction onClick={handleAction}>
-            Yes, delete it
-          </AlertDialogAction>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <div>
+      <div className="">
+        <div>input</div>
+        <InputComponent input={input} setInput={setInput} />
+        <InputComponent2 input={input2} setInput={setInput2} />
+        <InputComponent3 input={input3} setInput={setInput3} />
+      </div>
+    </div>
   );
 }
+
+export default Test;

@@ -12,11 +12,16 @@ import {
 import { Button } from "@/components/ui/button";
 
 type AlertProps = {
-  action: (id: string) => Promise<void>;
+  action: (id: string) => void;
   item: string;
   message: string;
   title: string;
 };
+
+// interface AlertProps {
+//   action: (id: string) => void;
+//   // ... other props
+// }
 
 export function Alert({ action, item, message, title }: AlertProps) {
   const handleAction = () => {
