@@ -88,6 +88,7 @@ export const ControlBar: React.FC<{
     );
   }
 );
+ControlBar.displayName = "ControlBar";
 
 export const ChatContent: React.FC<{ item: ChatMessage }> = React.memo(
   ({ item }) => {
@@ -119,6 +120,7 @@ export const ChatContent: React.FC<{ item: ChatMessage }> = React.memo(
     );
   }
 );
+ChatContent.displayName = "ChatContent";
 
 export const ChatView: React.FC<ChatViewProps> = React.memo(
   ({
@@ -218,3 +220,4 @@ export const ChatView: React.FC<ChatViewProps> = React.memo(
     );
   }
 );
+ChatView.displayName = "ChatView";
