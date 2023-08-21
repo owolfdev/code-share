@@ -4,6 +4,7 @@ import { use, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/lib/UserContext";
 
 import { SignInCard } from "@/components/signin";
 import { Divide } from "lucide-react";
@@ -16,6 +17,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function Tmp() {
   const router = useRouter();
+  const userContext = useUser();
 
   const handleSignIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({

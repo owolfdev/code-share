@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState, useRef, useEffect } from "react";
 // import Image from "next/image";
 // import Chat from "@/components/_archive/chat";
 import CodeChat from "@/components/codeChat";
@@ -19,6 +20,12 @@ export default function Home() {
 
   const userContext = useUser();
 
+  useEffect(() => {
+    if (!userContext?.user) {
+      router.push("/signin");
+    }
+  }, [userContext?.user]);
+
   const handleSupabaseAuth = async () => {
     if (userContext?.user) {
       await userContext.signOut();
@@ -29,27 +36,29 @@ export default function Home() {
   };
 
   return (
-    <section className="px-4 sm:px-8 flex flex-col items-center justify-center gap-6 pt-12 pb-8 w-full max-w-[800px] ">
-      <div className="flex gap-2 justify-between w-full px-2">
-        <h1 className="flex flex-col items-center h-full text-4xl font-bold">
-          Share Code
-        </h1>
-        <div className="w-auto items-center flex">
-          <button
-            className="rounded bg-gray-200 px-2  hover:bg-gray-100 cursor-pointer border"
-            onClick={handleSupabaseAuth}
-          >
-            {userContext?.user ? "Sign Out" : "Sign In"}
-          </button>
+    userContext?.user && (
+      <section className="px-4 sm:px-8 flex flex-col items-center justify-center gap-6 pt-12 pb-8 w-full max-w-[800px] ">
+        <div className="flex gap-2 justify-between w-full px-2">
+          <h1 className="flex flex-col items-center h-full text-4xl font-bold">
+            Share Code
+          </h1>
+          <div className="w-auto items-center flex">
+            <button
+              className="rounded bg-gray-200 px-2  hover:bg-gray-100 cursor-pointer border"
+              onClick={handleSupabaseAuth}
+            >
+              {userContext?.user ? "Sign Out" : "Sign In"}
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="w-full">
-        <CodeChat supabase={supabase} />
-      </div>
-      {/* <div>
+        <div className="w-full">
+          <CodeChat supabase={supabase} />
+        </div>
+        {/* <div>
         <Test />
       </div> */}
-    </section>
+      </section>
+    )
   );
 }
